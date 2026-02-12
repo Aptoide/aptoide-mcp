@@ -1,12 +1,21 @@
 FROM python:3.12-slim
-RUN useradd -m -u 1000 appuser
+
+ARG USER_ID=1001
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
 WORKDIR /app
-COPY requirements.txt .
+
+COPY --chown=${USER_ID}:0 --chmod=0775 . .
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-COPY server.py .
-RUN chown -R appuser:appuser /app
-USER appuser
+
+USER ${USER_ID}
+
 EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
-CMD ["python", "server.py"]
+
+ENTRYPOINT ["python", "server.py"]
