@@ -1,6 +1,10 @@
-__pycache__
+__pycache__/
 *.pyc
 .git
-.context
+.context/
+.claude/
+.conductor/
 firebase-debug.log
 .env
+README.md
+LICENSE
